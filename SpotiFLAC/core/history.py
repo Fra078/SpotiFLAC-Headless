@@ -8,7 +8,8 @@ class HistoryManager:
     """Gestisce la cronologia delle ricerche (recent-fetches)."""
 
     def __init__(self):
-        self.path = Path.home() / ".cache" / "spotiflac" / "recent-fetches.json"
+        from .paths import get_cache_dir
+        self.path = get_cache_dir() / "recent-fetches.json"
         self.path.parent.mkdir(parents=True, exist_ok=True)
 
     def add(self, metadata: TrackMetadata):

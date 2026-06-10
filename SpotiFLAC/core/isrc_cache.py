@@ -12,7 +12,8 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-_CACHE_FILE = Path.home() / ".cache" / "spotiflac" / "isrc-cache.json"
+from .paths import get_cache_dir
+_CACHE_FILE = get_cache_dir() / "isrc-cache.json"
 _cache_lock = threading.Lock()
 _cache: dict[str, dict] | None = None
 

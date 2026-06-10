@@ -50,8 +50,9 @@ _ZARZ_USER_AGENT = "SpotiFLAC-Mobile/4.5.0"
 _CREDS_TTL        = 24 * 3600
 _PROBE_ISRC       = "USUM71703861"
 _OPEN_URL         = "https://open.qobuz.com/track/"
+from ..core.paths import get_cache_dir
 _CREDS_CACHE_FILE = os.path.join(
-    os.path.expanduser("~"), ".cache", "spotiflac", "qobuz-credentials.json"
+    get_cache_dir(), "qobuz-credentials.json"
 )
 
 _BUNDLE_RE    = re.compile(

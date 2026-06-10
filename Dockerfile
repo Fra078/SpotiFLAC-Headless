@@ -25,6 +25,13 @@ EXPOSE 8000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV XDG_CACHE_HOME=/config
+
+# Create volumes directory structure
+RUN mkdir -p /config /downloads
+
+# Expose configurations and downloads volumes
+VOLUME ["/config", "/downloads"]
 
 # Command to run the FastAPI application
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

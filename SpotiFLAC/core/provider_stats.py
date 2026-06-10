@@ -14,20 +14,12 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-_CACHE_DIR_NAME = "spotiflac"
+from .paths import get_cache_dir
 _CACHE_FILE_NAME = "provider_priority.json"
 
 
 def _get_cache_file() -> Path:
-    override = os.getenv("SPOTIFLAC_CACHE_DIR")
-    if override:
-        return Path(override) / _CACHE_FILE_NAME
-
-    xdg_cache_home = os.getenv("XDG_CACHE_HOME")
-    if xdg_cache_home:
-        return Path(xdg_cache_home) / _CACHE_DIR_NAME / _CACHE_FILE_NAME
-
-    return Path.home() / ".cache" / _CACHE_DIR_NAME / _CACHE_FILE_NAME
+    return get_cache_dir() / _CACHE_FILE_NAME
 
 
 def get_cache_path() -> Path:

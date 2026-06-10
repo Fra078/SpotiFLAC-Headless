@@ -170,7 +170,8 @@ _tidal_api_list_mu:    threading.Lock = threading.Lock()
 _tidal_api_list_state: dict[str, Any] | None = None
 
 def _get_cache_path() -> Path:
-    cache_dir = Path.home() / ".cache" / "spotiflac"
+    from ..core.paths import get_cache_dir
+    cache_dir = get_cache_dir()
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir / _TIDAL_API_CACHE_FILE
 

@@ -19,7 +19,8 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 
 logger = logging.getLogger(__name__)
 _io_lock = threading.Lock()
-_PROFILES_FILE = Path.home() / ".cache" / "spotiflac" / "profiles.json"
+from .paths import get_cache_dir
+_PROFILES_FILE = get_cache_dir() / "profiles.json"
 
 
 class ProfileConfig(BaseModel):

@@ -13,7 +13,8 @@ logger = logging.getLogger("SpotiFLAC.Server")
 def run_download_background(payload: DownloadRequest):
     logger.info(f"Starting background download for URL: {payload.url}")
     try:
-        target_dir = payload.output_dir or os.path.join(os.path.expanduser("~"), "Music", "SpotiFLAC")
+        from SpotiFLAC.core.paths import get_default_download_dir
+        target_dir = payload.output_dir or str(get_default_download_dir())
         opts = DownloadOptions(
             output_dir=target_dir,
             services=payload.services,

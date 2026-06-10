@@ -13,7 +13,8 @@ from SpotiFLAC.core.profiles import (
 
 router = APIRouter(prefix="/api/settings", tags=["Settings"])
 
-SETTINGS_FILE = Path.home() / ".cache" / "spotiflac" / "gui-settings.json"
+from SpotiFLAC.core.paths import get_cache_dir
+SETTINGS_FILE = get_cache_dir() / "gui-settings.json"
 
 @router.get("", response_model=AppSettings)
 def get_global_settings():

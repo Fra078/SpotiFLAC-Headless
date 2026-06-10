@@ -16,7 +16,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 _io_lock = threading.Lock()
-_SESSION_FILE = Path.home() / ".cache" / "spotiflac" / "session.json"
+from .paths import get_cache_dir
+_SESSION_FILE = get_cache_dir() / "session.json"
 _MAX_HISTORY  = 20
 
 
