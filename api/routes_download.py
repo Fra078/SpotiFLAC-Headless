@@ -63,53 +63,7 @@ def get_download_stats():
     """
     try:
         manager = DownloadManager()
-        with manager._lock:
-            queue_items = []
-            completed_items = []
-            
-            for i in manager._queue:
-                item_data = {
-                    "id": i.id,
-                    "track_name": i.track_name,
-                    "artist_name": i.artist_name,
-                    "album_name": i.album_name,
-                    "spotify_id": i.spotify_id,
-                    "status": i.status.value,
-                    "progress": i.progress,
-                    "total_size": i.total_size,
-                    "speed": i.speed,
-                    "file_path": i.file_path,
-                    "end_time": i.end_time,
-                    "error_message": i.error_message
-                }
-                queue_items.append(item_data)
-                if i.status.value == "completed":
-                    completed_items.append(item_data)
-            
-            # Sort completed items by end_time descending (latest completed first)
-            completed_items.sort(key=lambda x: x["end_time"], reverse=True)
-            latest_completed = completed_items[:20]
-            
-            # Recompute active downloaded bytes
-            active_bytes = sum(item.progress for item in manager._queue if item.status.value == "downloading")
-            
-            queued = sum(1 for item in manager._queue if item.status.value == "queued")
-            completed = len(completed_items)
-            failed = sum(1 for item in manager._queue if item.status.value == "failed")
-            skipped = sum(1 for item in manager._queue if item.status.value == "skipped")
-            
-            return {
-                "is_downloading": manager.is_downloading,
-                "current_speed": manager.current_speed,
-                "total_downloaded": manager.total_downloaded + active_bytes,
-                "queued": queued,
-                "completed": completed,
-                "failed": failed,
-                "skipped": skipped,
-                "downloads": queue_items,
-                "queue": queue_items,
-                "latest_completed": latest_completed
-            }
+        return manager.get_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -132,19 +86,60 @@ async def websocket_downloads(websocket: WebSocket):
     """
     await websocket.accept()
     logger.info("WebSocket client connected to live download stats")
+    
+    from SpotiFLAC.core.progress import DownloadBroadcaster, DownloadManager
+    
+    loop = asyncio.get_running_loop()
+    q = asyncio.Queue()
+    broadcaster = DownloadBroadcaster()
+    broadcaster.subscribe(q, loop)
+    
+    # Send the initial status immediately upon connection
     try:
-        last_stats = None
-        while True:
-            stats = get_download_stats()
-            # Push updates only if the status changes (e.g. speed, progress, state changes)
-            if stats != last_stats:
-                await websocket.send_json(stats)
-                last_stats = stats
+        manager = DownloadManager()
+        await websocket.send_json(manager.get_stats())
+    except Exception as e:
+        logger.error(f"Error sending initial stats via WebSocket: {e}")
+        broadcaster.unsubscribe(q)
+        await websocket.close()
+        return
+
+    # Task to read from the websocket to detect client disconnection promptly
+    async def receive_messages():
+        try:
+            async for _ in websocket.iter_text():
+                pass
+        except WebSocketDisconnect:
+            pass
+        except Exception:
+            pass
+
+    recv_task = asyncio.create_task(receive_messages())
+
+    try:
+        while not recv_task.done():
+            get_task = asyncio.create_task(q.get())
+            done, pending = await asyncio.wait(
+                {get_task, recv_task},
+                return_when=asyncio.FIRST_COMPLETED
+            )
             
-            # Refresh rate is higher (500ms) when active downloading occurs
-            sleep_time = 0.5 if stats.get("is_downloading") else 2.0
-            await asyncio.sleep(sleep_time)
+            if recv_task in done:
+                get_task.cancel()
+                break
+                
+            if get_task in done:
+                stats = get_task.result()
+                await websocket.send_json(stats)
     except WebSocketDisconnect:
         logger.info("WebSocket client disconnected")
     except Exception as e:
         logger.error(f"WebSocket error: {e}")
+    finally:
+        broadcaster.unsubscribe(q)
+        recv_task.cancel()
+        try:
+            await websocket.close()
+        except Exception:
+            pass
+        logger.info("WebSocket connection finalized and cleaned up")
