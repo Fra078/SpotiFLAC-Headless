@@ -252,9 +252,9 @@ def main() -> None:
         return
 
     if len(sys.argv) == 1:
-        from .app import run_gui
-        run_gui()
-        return
+        # Show help if no arguments are provided (GUI is disabled)
+        sys.argv.append("-h")
+
 
     # ── CLI mode ──────────────────────────────────────────────────────
     print_ffmpeg_warning()

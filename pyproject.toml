@@ -41,7 +41,6 @@ dependencies = [
     "packaging>=23.0",
     "yt-dlp>=2024.04.09",
     "tqdm>=4.66.0",
-    "pywebview>=5.0.0",
     "aiofiles>=23.2.1",
     "tenacity>=8.3.0",
     "python-dotenv>=1.0.0"
@@ -58,20 +57,3 @@ spotiflac = "SpotiFLAC.launcher:main"
 [tool.setuptools]
 packages = { find = { include = ["SpotiFLAC*"] } }
 include-package-data = true
-
-[tool.setuptools.data-files]
-"frontend" = [
-    "frontend/index.html",
-    "frontend/app.js",
-    "frontend/styles.css",
-]
-
-"frontend/assets/icons" = [
-    "frontend/assets/icons/*",
-]
-
-
-# Use setuptools.find to locate the backend package inside `backend/`.
-# Previously `py-modules` was set which caused only top-level modules
-# (`launcher`, `app`) to be included in the wheel; switching to `packages`
-# ensures the package directory is packaged into the wheel.
