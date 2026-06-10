@@ -169,7 +169,7 @@ def download_one(
                             shutil.move(result.file_path, target)
                         result = DownloadResult.ok(result.provider, target, result.format or "flac")
  
-                    logger.info("[%s] ✓ %s — %s", provider.name, metadata.artists, metadata.title)
+                    logger.info("[%s] ✓ %s — %s (File: %s)", provider.name, metadata.artists, metadata.title, result.file_path)
                     return result
  
                 errors[provider.name] = result.error or "unknown error"
