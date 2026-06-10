@@ -1,0 +1,1590 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SpotiFLAC Headless API",
+    "description": "Application state and download endpoints",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/search": {
+      "get": {
+        "summary": "Search Catalog",
+        "operationId": "search_catalog_api_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get Global Settings",
+        "operationId": "get_global_settings_api_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppSettings"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Update Global Settings",
+        "operationId": "update_global_settings_api_settings_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppSettings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/profiles": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get All Profiles",
+        "operationId": "get_all_profiles_api_settings_profiles_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/profiles/{name}": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get Single Profile",
+        "operationId": "get_single_profile_api_settings_profiles__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppSettings"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Create Or Update Profile",
+        "operationId": "create_or_update_profile_api_settings_profiles__name__post",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppSettings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Remove Profile",
+        "operationId": "remove_profile_api_settings_profiles__name__delete",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/options": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get Available Options",
+        "description": "Fornisce al frontend tutte le opzioni valide lette direttamente\ndal Single Source of Truth (le Enum di Pydantic).",
+        "operationId": "get_available_options_api_settings_options_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/status/version": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Get Version",
+        "operationId": "get_version_api_status_version_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/status/ffmpeg": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Get Ffmpeg Status",
+        "operationId": "get_ffmpeg_status_api_status_ffmpeg_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FfmpegStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/status/network": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Get Network Status",
+        "operationId": "get_network_status_api_status_network_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/status/health": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Get Health Status",
+        "description": "Runs health checks for the requested streaming service providers.",
+        "operationId": "get_health_status_api_status_health_get",
+        "parameters": [
+          {
+            "name": "services",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "tidal",
+                "qobuz",
+                "deezer",
+                "apple",
+                "soundcloud",
+                "spoti"
+              ],
+              "title": "Services"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HealthResultSchema"
+                  },
+                  "title": "Response Get Health Status Api Status Health Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/status/check_endpoint": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Check Custom Endpoint",
+        "description": "Performs a simple GET request validation on a custom API endpoint URL.",
+        "operationId": "check_custom_endpoint_api_status_check_endpoint_get",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Url"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointCheckResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/history": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "summary": "Get History",
+        "description": "Retrieve URL download history.",
+        "operationId": "get_history_api_history_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoryItem"
+                  },
+                  "type": "array",
+                  "title": "Response Get History Api History Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "History"
+        ],
+        "summary": "Clear History",
+        "description": "Clear all URL history.",
+        "operationId": "clear_history_api_history_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/history/item": {
+      "delete": {
+        "tags": [
+          "History"
+        ],
+        "summary": "Remove History Item",
+        "description": "Remove a specific URL from history.",
+        "operationId": "remove_history_item_api_history_item_delete",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Url"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/download": {
+      "post": {
+        "tags": [
+          "Download"
+        ],
+        "summary": "Start Download",
+        "description": "Queue a new download in the background.",
+        "operationId": "start_download_api_download_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/download/stats": {
+      "get": {
+        "tags": [
+          "Download"
+        ],
+        "summary": "Get Download Stats",
+        "description": "Get live progress, speeds, status of the current download queue, and list of latest completed files.",
+        "operationId": "get_download_stats_api_download_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadStatsSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/download/reset": {
+      "post": {
+        "tags": [
+          "Download"
+        ],
+        "summary": "Reset Download Queue",
+        "description": "Reset the download manager queue and clear statistics.",
+        "operationId": "reset_download_queue_api_download_reset_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/download/ws": {
+      "get": {
+        "summary": "WebSocket Live Download Progress",
+        "description": "Establishes a WebSocket connection to stream real-time download queue stats, progress, and speed updates.",
+        "tags": [
+          "Download"
+        ],
+        "responses": {
+          "101": {
+            "description": "Switching Protocols (Handshake successful)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlbumResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover",
+            "default": ""
+          },
+          "external_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Url",
+            "default": ""
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "default": "spotify"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "album"
+          },
+          "artist": {
+            "type": "string",
+            "title": "Artist"
+          },
+          "release_date": {
+            "type": "string",
+            "title": "Release Date",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "artist"
+        ],
+        "title": "AlbumResponse"
+      },
+      "AppSettings": {
+        "properties": {
+          "output_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Dir"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/AudioQuality",
+            "default": "LOSSLESS"
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderService"
+            },
+            "type": "array",
+            "title": "Services",
+            "default": [
+              "tidal",
+              "qobuz",
+              "deezer"
+            ]
+          },
+          "lyrics_providers": {
+            "items": {
+              "$ref": "#/components/schemas/LyricsProvider"
+            },
+            "type": "array",
+            "title": "Lyrics Providers",
+            "default": [
+              "spotify",
+              "apple",
+              "musixmatch",
+              "lrclib",
+              "amazon"
+            ]
+          },
+          "filename_format": {
+            "type": "string",
+            "title": "Filename Format",
+            "default": "{title} - {artist}"
+          },
+          "use_track_numbers": {
+            "type": "boolean",
+            "title": "Use Track Numbers",
+            "default": false
+          },
+          "use_album_track_numbers": {
+            "type": "boolean",
+            "title": "Use Album Track Numbers",
+            "default": false
+          },
+          "use_artist_subfolders": {
+            "type": "boolean",
+            "title": "Use Artist Subfolders",
+            "default": false
+          },
+          "use_album_subfolders": {
+            "type": "boolean",
+            "title": "Use Album Subfolders",
+            "default": false
+          },
+          "embed_lyrics": {
+            "type": "boolean",
+            "title": "Embed Lyrics",
+            "default": true
+          },
+          "enrich_metadata": {
+            "type": "boolean",
+            "title": "Enrich Metadata",
+            "default": true
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "AppSettings"
+      },
+      "ArtistResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover",
+            "default": ""
+          },
+          "external_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Url",
+            "default": ""
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "default": "spotify"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "artist"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ArtistResponse"
+      },
+      "AudioQuality": {
+        "type": "string",
+        "enum": [
+          "LOSSLESS",
+          "HIGH",
+          "NORMAL"
+        ],
+        "title": "AudioQuality"
+      },
+      "DownloadRequest": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "output_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Dir"
+          },
+          "quality": {
+            "type": "string",
+            "title": "Quality",
+            "default": "LOSSLESS"
+          },
+          "services": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Services",
+            "default": [
+              "tidal",
+              "qobuz",
+              "deezer"
+            ]
+          },
+          "allow_fallback": {
+            "type": "boolean",
+            "title": "Allow Fallback",
+            "default": true
+          },
+          "filename_format": {
+            "type": "string",
+            "title": "Filename Format",
+            "default": "{title} - {artist}"
+          },
+          "use_track_numbers": {
+            "type": "boolean",
+            "title": "Use Track Numbers",
+            "default": false
+          },
+          "use_album_track_numbers": {
+            "type": "boolean",
+            "title": "Use Album Track Numbers",
+            "default": false
+          },
+          "use_artist_subfolders": {
+            "type": "boolean",
+            "title": "Use Artist Subfolders",
+            "default": false
+          },
+          "use_album_subfolders": {
+            "type": "boolean",
+            "title": "Use Album Subfolders",
+            "default": false
+          },
+          "first_artist_only": {
+            "type": "boolean",
+            "title": "First Artist Only",
+            "default": false
+          },
+          "embed_lyrics": {
+            "type": "boolean",
+            "title": "Embed Lyrics",
+            "default": true
+          },
+          "lyrics_providers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Lyrics Providers",
+            "default": [
+              "spotify",
+              "apple",
+              "musixmatch",
+              "lrclib",
+              "amazon"
+            ]
+          },
+          "enrich_metadata": {
+            "type": "boolean",
+            "title": "Enrich Metadata",
+            "default": true
+          },
+          "enrich_providers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Enrich Providers",
+            "default": [
+              "deezer",
+              "apple",
+              "qobuz",
+              "tidal",
+              "soundcloud"
+            ]
+          },
+          "track_max_retries": {
+            "type": "integer",
+            "title": "Track Max Retries",
+            "default": 0
+          },
+          "post_download_action": {
+            "type": "string",
+            "title": "Post Download Action",
+            "default": "none"
+          },
+          "post_download_command": {
+            "type": "string",
+            "title": "Post Download Command",
+            "default": ""
+          },
+          "qobuz_local_api_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qobuz Local Api Url"
+          },
+          "tidal_custom_api": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tidal Custom Api"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "DownloadRequest"
+      },
+      "DownloadStatsSchema": {
+        "properties": {
+          "is_downloading": {
+            "type": "boolean",
+            "title": "Is Downloading"
+          },
+          "current_speed": {
+            "type": "number",
+            "title": "Current Speed"
+          },
+          "total_downloaded": {
+            "type": "number",
+            "title": "Total Downloaded"
+          },
+          "queued": {
+            "type": "integer",
+            "title": "Queued"
+          },
+          "completed": {
+            "type": "integer",
+            "title": "Completed"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "skipped": {
+            "type": "integer",
+            "title": "Skipped"
+          },
+          "downloads": {
+            "items": {
+              "$ref": "#/components/schemas/QueueItemSchema"
+            },
+            "type": "array",
+            "title": "Downloads",
+            "default": []
+          },
+          "queue": {
+            "items": {
+              "$ref": "#/components/schemas/QueueItemSchema"
+            },
+            "type": "array",
+            "title": "Queue"
+          },
+          "latest_completed": {
+            "items": {
+              "$ref": "#/components/schemas/QueueItemSchema"
+            },
+            "type": "array",
+            "title": "Latest Completed",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_downloading",
+          "current_speed",
+          "total_downloaded",
+          "queued",
+          "completed",
+          "failed",
+          "skipped",
+          "downloads",
+          "queue"
+        ],
+        "title": "DownloadStatsSchema"
+      },
+      "EndpointCheckResult": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "status_code": {
+            "type": "integer",
+            "title": "Status Code"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok",
+          "status_code",
+          "url"
+        ],
+        "title": "EndpointCheckResult"
+      },
+      "FfmpegStatus": {
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "available",
+          "version",
+          "error"
+        ],
+        "title": "FfmpegStatus"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResultSchema": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "latency": {
+            "type": "number",
+            "title": "Latency"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "url",
+          "method",
+          "ok",
+          "latency",
+          "detail"
+        ],
+        "title": "HealthResultSchema"
+      },
+      "HistoryItem": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover",
+            "default": ""
+          },
+          "track_count": {
+            "type": "integer",
+            "title": "Track Count",
+            "default": 0
+          },
+          "url_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url Type",
+            "default": ""
+          },
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist",
+            "default": ""
+          },
+          "at": {
+            "type": "integer",
+            "title": "At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "label",
+          "at"
+        ],
+        "title": "HistoryItem"
+      },
+      "LyricsProvider": {
+        "type": "string",
+        "enum": [
+          "spotify",
+          "apple",
+          "musixmatch",
+          "lrclib",
+          "amazon"
+        ],
+        "title": "LyricsProvider"
+      },
+      "NetworkStatus": {
+        "properties": {
+          "ip": {
+            "type": "string",
+            "title": "Ip"
+          },
+          "country_name": {
+            "type": "string",
+            "title": "Country Name"
+          },
+          "country_code": {
+            "type": "string",
+            "title": "Country Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ip",
+          "country_name",
+          "country_code"
+        ],
+        "title": "NetworkStatus"
+      },
+      "PlaylistResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover",
+            "default": ""
+          },
+          "external_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Url",
+            "default": ""
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "default": "spotify"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "playlist"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Owner",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "PlaylistResponse"
+      },
+      "ProviderService": {
+        "type": "string",
+        "enum": [
+          "tidal",
+          "qobuz",
+          "deezer",
+          "apple",
+          "soundcloud",
+          "spoti"
+        ],
+        "title": "ProviderService"
+      },
+      "QueueItemSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "track_name": {
+            "type": "string",
+            "title": "Track Name"
+          },
+          "artist_name": {
+            "type": "string",
+            "title": "Artist Name"
+          },
+          "album_name": {
+            "type": "string",
+            "title": "Album Name"
+          },
+          "spotify_id": {
+            "type": "string",
+            "title": "Spotify Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "progress": {
+            "type": "number",
+            "title": "Progress"
+          },
+          "total_size": {
+            "type": "number",
+            "title": "Total Size"
+          },
+          "speed": {
+            "type": "number",
+            "title": "Speed"
+          },
+          "file_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Path",
+            "default": ""
+          },
+          "end_time": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Time",
+            "default": 0.0
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "track_name",
+          "artist_name",
+          "album_name",
+          "spotify_id",
+          "status",
+          "progress",
+          "total_size",
+          "speed"
+        ],
+        "title": "QueueItemSchema"
+      },
+      "SearchResponse": {
+        "properties": {
+          "tracks": {
+            "items": {
+              "$ref": "#/components/schemas/TrackResponse"
+            },
+            "type": "array",
+            "title": "Tracks"
+          },
+          "albums": {
+            "items": {
+              "$ref": "#/components/schemas/AlbumResponse"
+            },
+            "type": "array",
+            "title": "Albums"
+          },
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistResponse"
+            },
+            "type": "array",
+            "title": "Artists"
+          },
+          "playlists": {
+            "items": {
+              "$ref": "#/components/schemas/PlaylistResponse"
+            },
+            "type": "array",
+            "title": "Playlists"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tracks",
+          "albums",
+          "artists",
+          "playlists"
+        ],
+        "title": "SearchResponse"
+      },
+      "TrackResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover",
+            "default": ""
+          },
+          "external_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Url",
+            "default": ""
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "default": "spotify"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "track"
+          },
+          "artist": {
+            "type": "string",
+            "title": "Artist"
+          },
+          "album": {
+            "type": "string",
+            "title": "Album"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "title": "Duration Ms"
+          },
+          "preview_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview Url",
+            "default": ""
+          },
+          "playcount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Playcount",
+            "default": ""
+          },
+          "explicit": {
+            "type": "boolean",
+            "title": "Explicit",
+            "default": false
+          },
+          "isrc": {
+            "type": "string",
+            "title": "Isrc",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "artist",
+          "album",
+          "duration_ms"
+        ],
+        "title": "TrackResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
